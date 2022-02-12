@@ -1,1 +1,60 @@
 
+name: JIB container publish
+description: "Build automatically container with JIB and publish it to GitHub Packages."
+branding:
+  icon: "package"
+  color: "gray-dark"
+
+inputs:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY:
+    description: "Registry of the image to publish"
+    required: true
+    default: ghcr.io
+  # github.repository as <account>/<repo>
+  IMAGE_NAME:
+    description: "Name of the image to publish"
+    required: true
+    default: ${{ github.repository }}
+  # Username to login to registry
+  USERNAME:
+    description: "Username to login to registry"
+    required: true
+    default: ${{ github.actor }}
+  # Password to login to registry
+  PASSWORD:
+    description: "Password to login to registry"
+    required: true
+  # Name of the tag to publish
+  tag-name:
+    description: "Tag name of the image to publish"
+    required: true
+    default: "latest"
+  # Java version to use
+  java-version:
+    description: "Java version to use"
+    required: true
+    default: "17"
+
+runs:
+  using: "composite"
+  steps:
+    - id: downcase
+      uses: ASzc/change-string-case-action@v2
+      with:
+        string: ${{ inputs.IMAGE_NAME }}
+
+    - uses: actions/checkout@v2
+    - name: Set up JDK 17
+      uses: actions/setup-java@v2
+      with:
+        distribution: "adopt"
+        java-version: ${{ inputs.java-version }}
+
+    - name: Buil JIB container and publish to GitHub Packages
+      run: |
+        mvn compile com.google.cloud.tools:jib-maven-plugin:3.2.0:build \
+        -Djib.to.image=${{ inputs.REGISTRY }}/${{ steps.downcase.outputs.lowercase }}:${{ inputs.tag-name }} \
+        -Djib.to.auth.username=${{ inputs.USERNAME }} \
+        -Djib.to.auth.password=${{ inputs.PASSWORD }}
+      shell: bash
