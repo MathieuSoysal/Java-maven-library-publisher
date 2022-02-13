@@ -57,3 +57,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           java-version: 17
 ```
+## Badge
+Don't forget to add your own SonarCloud badges to your readme :wink::
+- to get your maven-central badge : https://shields.io/category/platform-support
+
+## License
+The Dockerfile and associated scripts and documentation in this project are released under the [Apache 2.0 License](https://github.com/MathieuSoysal/Javadoc-publisher.yml/blob/main/LICENSE).
