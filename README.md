@@ -58,7 +58,9 @@ jobs:
           java-version: 17
 ```
 ## Badge
-Don't forget to add your own SonarCloud badges to your readme :wink::
+![image](https://user-images.githubusercontent.com/43273304/153753204-fbf0d020-c650-4b9f-9b55-13a53f50bc5b.png)
+
+Don't forget to add your own MavenCentral badges to your readme :wink::
 - to get your maven-central badge : https://shields.io/category/platform-support
 
 ## License
