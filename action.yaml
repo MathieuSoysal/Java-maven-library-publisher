@@ -1,60 +1,81 @@
-
-name: JIB container publish
-description: "Build automatically container with JIB and publish it to GitHub Packages."
+name: Java maven library publisher
+author: "Mathieu Soysal (@MathieuSoysal)"
+description: "Build automatically Java Maven library and publish it to GitHub Packages and Maven Central."
 branding:
   icon: "package"
   color: "gray-dark"
 
 inputs:
-  # Use docker.io for Docker Hub if empty
-  REGISTRY:
-    description: "Registry of the image to publish"
+  nexus-username:
+    description: "Nexus username"
     required: true
-    default: ghcr.io
-  # github.repository as <account>/<repo>
-  IMAGE_NAME:
-    description: "Name of the image to publish"
+  nexus-password:
+    description: "Nexus password"
     required: true
-    default: ${{ github.repository }}
-  # Username to login to registry
-  USERNAME:
-    description: "Username to login to registry"
+  gpg-private-key:
+    description: "GPG private key"
     required: true
-    default: ${{ github.actor }}
-  # Password to login to registry
-  PASSWORD:
-    description: "Password to login to registry"
+  gpg-passphrase:
+    description: "GPG passphrase"
     required: true
-  # Name of the tag to publish
-  tag-name:
-    description: "Tag name of the image to publish"
+  github-token:
+    description: "GitHub token"
     required: true
-    default: "latest"
   # Java version to use
   java-version:
     description: "Java version to use"
     required: true
     default: "17"
+  # Library version
+  library-version:
+    description: "Library version"
+    required: false
+    default: ""
 
 runs:
   using: "composite"
   steps:
-    - id: downcase
-      uses: ASzc/change-string-case-action@v2
-      with:
-        string: ${{ inputs.IMAGE_NAME }}
-
-    - uses: actions/checkout@v2
-    - name: Set up JDK 17
+    - name: Set up JDK 17 for deploy to OSSRH
       uses: actions/setup-java@v2
       with:
         distribution: "adopt"
         java-version: ${{ inputs.java-version }}
+        server-id: ossrh
+        server-username: ${{ inputs.nexus-username }}
+        server-password: ${{ inputs.nexus-password }}
+        gpg-private-key: ${{ inputs.gpg-private-key }}
+        gpg-passphrase: ${{ inputs.gpg-passphrase }}
 
-    - name: Buil JIB container and publish to GitHub Packages
-      run: |
-        mvn compile com.google.cloud.tools:jib-maven-plugin:3.2.0:build \
-        -Djib.to.image=${{ inputs.REGISTRY }}/${{ steps.downcase.outputs.lowercase }}:${{ inputs.tag-name }} \
-        -Djib.to.auth.username=${{ inputs.USERNAME }} \
-        -Djib.to.auth.password=${{ inputs.PASSWORD }}
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
       shell: bash
+
+    - name: Update package version
+      run: mvn versions:set -DnewVersion=${{ inputs.library-version }}
+      if: ${{ inputs.library-version != "" }}
+      shell: bash
+
+    - name: Prepare Maven environnement with Java 17 for deployment to OSSRH
+      run: export MAVEN_OPTS="--add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.text=ALL-UNNAMED --add-opens=java.desktop/java.awt.font=ALL-UNNAMED"
+      shell: bash
+
+    - name: Publish to Apache Maven Central
+      run: mvn deploy -PossrhDeploy
+      shell: bash
+      env:
+        MAVEN_USERNAME: ${{ inputs.nexus-username }}
+        MAVEN_CENTRAL_TOKEN: ${{ inputs.nexus-password }}
+        MAVEN_GPG_PASSPHRASE: ${{ inputs.gpg-passphrase }}
+
+    - name: Set up JDK 17 for deploy to github packages
+      uses: actions/setup-java@v2
+      with:
+        distribution: "adopt"
+        java-version: ${{ inputs.java-version }}
+        server-id: github
+
+    - name: Publish to GitHub Packages Apache Maven
+      run: mvn deploy -PgithubDeploy
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
