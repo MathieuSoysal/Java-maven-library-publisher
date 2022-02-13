@@ -12,12 +12,12 @@ GitHub action to build a Java Maven library and publish it to GitHub Packages an
 ## Configurations
 
 ### GitHub secrets 
-- [ ] **Create your GitHub secrets on your repository**
-  - *NEXUS_USERNAME* with your username used on Sonatype
-  - *NEXUS_PASSWORD* with your password used on Sonatype
-  - *GPG_PRIVATE_KEY* with the private key of your generated pgp key
-    - to get the private key `gpg --armor --export-secret-key <key-id> > privkey.asc` 
-  - *GPG_PASSPHRASE* with the passphrase of your gpg key
+Create your GitHub secrets on your repository:
+- [ ] **NEXUS_USERNAME** with your username used on Sonatype
+- [ ] **NEXUS_PASSWORD** with your password used on Sonatype
+- [ ] **GPG_PRIVATE_KEY** with the private key of your generated pgp key
+  - to get the private key `gpg --armor --export-secret-key <key-id> > privkey.asc` 
+- [ ] **GPG_PASSPHRASE** with the passphrase of your gpg key
 
 ### pom.xml
 Inside your *pom.xml* file you need to set:
