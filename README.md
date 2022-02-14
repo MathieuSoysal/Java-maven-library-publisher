@@ -39,7 +39,7 @@ Inside your *pom.xml* file you need to set:
 The workflow, usually declared in `.github/workflows/library-publish.yml`, looks like:
 
 ```YAML
-name: JIB container publish
+name: Java library publisher
 on:
   release:
     types: [created]
