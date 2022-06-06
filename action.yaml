@@ -51,8 +51,8 @@ runs:
       shell: bash
 
     - name: Update package version
+      if: ${{ inputs.library-version != '' }}
       run: mvn versions:set -DnewVersion=${{ inputs.library-version }}
-      if: ${{ inputs.library-version != "" }}
       shell: bash
 
     - name: Prepare Maven environnement with Java 17 for deployment to OSSRH
