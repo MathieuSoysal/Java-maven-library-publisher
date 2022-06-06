@@ -47,7 +47,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - name: JIB container build and publish
+      - name: Maven Library build and publish
         uses: MathieuSoysal/Java-maven-library-publisher@v1.0.0
         with:
           nexus-username: ${{ secrets.NEXUS_USERNAME }}
