@@ -15,5 +15,6 @@ jobs:
           nexus-password: ${{ secrets.NEXUS_PASSWORD }}
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          library-version: $GITHUB_RUN_NUMBER
           github-token: ${{ secrets.GITHUB_TOKEN }}
           java-version: 17
