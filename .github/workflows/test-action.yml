@@ -6,7 +6,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    steps:
       - name: Maven Library build and publish
         uses: ./
         with:
