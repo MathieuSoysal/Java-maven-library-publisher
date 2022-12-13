@@ -18,3 +18,5 @@ jobs:
           library-version: $GITHUB_RUN_NUMBER
           github-token: ${{ secrets.GITHUB_TOKEN }}
           java-version: 17
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}

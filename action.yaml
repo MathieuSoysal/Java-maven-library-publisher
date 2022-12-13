@@ -77,8 +77,6 @@ runs:
         distribution: "adopt"
         java-version: ${{ inputs.java-version }}
         server-id: github
-      env:
-        GPG_PASSPHRASE: ${{ inputs.gpg-passphrase }}
 
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -PgithubDeploy
