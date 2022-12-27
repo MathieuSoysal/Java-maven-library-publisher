@@ -40,15 +40,15 @@ runs:
       uses: actions/checkout@v3
 
     - name: Set up JDK 17 for deploy to OSSRH
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
         distribution: "adopt"
         java-version: ${{ inputs.java-version }}
         server-id: ossrh
-        server-username: ${{ inputs.nexus-username }}
-        server-password: ${{ inputs.nexus-password }}
+        server-username: MAVEN_USERNAME
+        server-password: MAVEN_PASSWORD
         gpg-private-key: ${{ inputs.gpg-private-key }}
-        gpg-passphrase: ${{ inputs.gpg-passphrase }}
+        gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
@@ -69,10 +69,11 @@ runs:
       env:
         MAVEN_USERNAME: ${{ inputs.nexus-username }}
         MAVEN_CENTRAL_TOKEN: ${{ inputs.nexus-password }}
+        MAVEN_PASSWORD: ${{ inputs.nexus-password }}
         MAVEN_GPG_PASSPHRASE: ${{ inputs.gpg-passphrase }}
 
     - name: Set up JDK 17 for deploy to github packages
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
         distribution: "adopt"
         java-version: ${{ inputs.java-version }}

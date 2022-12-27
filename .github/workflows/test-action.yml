@@ -1,0 +1,22 @@
+name: Test Actions
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Maven Library build and publish
+        uses: ./
+        with:
+          nexus-username: ${{ secrets.NEXUS_USERNAME }}
+          nexus-password: ${{ secrets.NEXUS_PASSWORD }}
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          library-version: $GITHUB_RUN_NUMBER
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          java-version: 17
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
